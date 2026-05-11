@@ -44,6 +44,11 @@ function formatFileSize(bytes) {
 }
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('jwt_token') || null)
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' })
+  const [loginError, setLoginError] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
+
   const [fileType, setFileType] = useState(null)
   const [file, setFile] = useState(null)
   const [dragOver, setDragOver] = useState(false)
@@ -97,6 +102,9 @@ function App() {
       const API_URL = import.meta.env.VITE_API_URL || ''
       const response = await fetch(`${API_URL}/transaction/parse`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formData,
       })
 
@@ -196,21 +204,105 @@ function App() {
     })
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token')
+    setToken(null)
+    setResult(null)
+    setFile(null)
+    setFileType(null)
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoginError('')
+    setLoginLoading(true)
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || ''
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm)
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok && data.token) {
+        localStorage.setItem('jwt_token', data.token)
+        setToken(data.token)
+      } else {
+        setLoginError(data.error || 'Invalid credentials')
+      }
+    } catch (err) {
+      setLoginError('Network error connecting to server.')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
+
+  if (!token) {
+    return (
+      <div className="app-container login-container">
+        <div className="login-box">
+          <div className="login-header">
+            <h2>Secure Access</h2>
+            <p>Please log in to continue</p>
+          </div>
+          <form className="login-form" onSubmit={handleLogin}>
+            {loginError && <div className="error-banner">{loginError}</div>}
+            
+            <div className="form-group">
+              <label>Username</label>
+              <input 
+                type="text" 
+                value={loginForm.username}
+                onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
+                disabled={loginLoading}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Password</label>
+              <input 
+                type="password" 
+                value={loginForm.password}
+                onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                disabled={loginLoading}
+                required
+              />
+            </div>
+            
+            <button type="submit" className="upload-button" disabled={loginLoading} style={{marginTop: '20px'}}>
+              {loginLoading ? 'Authenticating...' : 'Login'}
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   const canUpload = fileType && file && !loading
 
   return (
     <div className="app-container">
       {/* Header */}
-      <header className="app-header">
-        <div className="app-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
+      <header className="app-header" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+          <div className="app-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="app-title" style={{margin: 0}}>BST Data Loader</h1>
+            <p className="app-subtitle" style={{margin: 0}}>Upload transaction files to load into the database</p>
+          </div>
         </div>
-        <h1 className="app-title">BST Data Loader</h1>
-        <p className="app-subtitle">Upload transaction files to load into the database</p>
+        <button className="reset-button" onClick={handleLogout} style={{padding: '8px 16px', background: 'rgba(255,255,255,0.1)'}}>
+          Logout
+        </button>
       </header>
 
       {/* Main Card */}
