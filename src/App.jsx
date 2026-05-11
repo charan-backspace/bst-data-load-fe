@@ -272,7 +272,7 @@ function App() {
               />
             </div>
             
-            <button type="submit" className="upload-button" disabled={loginLoading} style={{marginTop: '20px'}}>
+            <button type="submit" className="upload-button" disabled={loginLoading}>
               {loginLoading ? 'Authenticating...' : 'Login'}
             </button>
           </form>

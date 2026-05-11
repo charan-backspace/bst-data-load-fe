@@ -5,64 +5,94 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-box {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 40px;
+  padding: 36px 32px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
+  max-width: 380px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .login-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: var(--text-primary);
-  margin: 0 0 8px;
+  margin: 0 0 6px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
 .login-header p {
   color: var(--text-secondary);
+  font-size: 0.9rem;
   margin: 0;
 }
 
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .login-form .form-group {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .login-form label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .login-form input {
   width: 100%;
-  padding: 12px 16px;
-  background: var(--bg-body);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.2s;
+  color: #ffffff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
   box-sizing: border-box;
+}
+
+.login-form input:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .login-form input:focus {
   outline: none;
+  background: rgba(255, 255, 255, 0.1);
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.login-form .upload-button {
+  margin-top: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .error-banner {
